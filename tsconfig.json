@@ -12,6 +12,7 @@
     // For nodejs:
     "lib": ["esnext"],
     "types": ["node"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     // and npm install -D @types/node
 
     // Other Outputs
@@ -41,7 +42,7 @@
     "skipLibCheck": true
   },
   "include": ["src/**/*", "tests/**/*"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
   // "ts-node": {
   //   "swc": true
   // }

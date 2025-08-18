@@ -6,10 +6,9 @@ import buildConfig from './configurations.js';
 import { addTransporter } from './logger.js';
 import createServer from './server.js';
 
-const server = createServer();
-
 const configurations = buildConfig();
 
+const server = createServer(configurations);
 addTransporter(configurations.logs);
 
 server.listen(configurations.port, () => {

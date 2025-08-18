@@ -5,3 +5,6 @@ scrape_configs:
   - job_name: prometheus
     static_configs:
       - targets: ["192.168.29.202:8080"]
+    authorization:
+        type: Bearer
+        credentials: "x2tyR9lZxF5qqahPH8gIHXlSxFRlQkyd2SSalLO1hVaGh8pj0sQEjcPDa7l4VFBkQLP93LnxozDlLSvRWrtE8UoBA0aNNT0CCABAwyyFqR6sFVKK2vf7mOj1d0P0C2Du"

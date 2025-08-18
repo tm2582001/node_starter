@@ -67,7 +67,7 @@ export function addTransporter(configurations: LogsConfigurationType) {
   if (configurations.loki) {
     const lokiTransport = new LokiTransport({
       host: configurations.lokiUrl ?? '',
-      labels: { app: 'my-app' },
+      labels: { app: configurations.lokiAppName ?? 'my-app' },
       json: true,
       format: winston.format.combine(
         requestIdFormat(),

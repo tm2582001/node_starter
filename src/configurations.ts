@@ -76,6 +76,8 @@ const logsConfigurationSchema = z
     dailyRotateFile: z.coerce.boolean(),
     loki: z.coerce.boolean(),
     lokiUrl: z.url().optional(),
+    lokiAppName: z.string().optional(),
+    lokiEndpointToken: z.string().optional()
   })
   .refine((data) => !data.loki || data.lokiUrl, {
     message: 'lokiUrl is required when loki is true',
@@ -114,8 +116,7 @@ function buildConfig(): ConfigurationType {
       .map((err) => `${err.path.join('.')}:${err.message}`)
       .join('\n  ');
 
-    throw new Error(`Configuration validation failed:\n      
-   ${errorMessage}`);
+    throw new Error(`Configuration validation failed:\n ${errorMessage}`);
   }
 
   console.log('configurations parse successfully', JSON.stringify(result.data));

@@ -330,6 +330,12 @@ APP_LOGS__LOKIENDPOINTTOKEN=your-secure-token
 
 ## 🗄️ Database
 
+> 📖 **For comprehensive database best practices with clustering, see:** [Database Best Practices Guide](./docs/database-best-practices.md)
+
+## 💾 Memory Management
+
+> 📖 **For Node.js memory configuration and optimization, see:** [Memory Configuration Guide](./docs/memory-configuration.md)
+
 ### Drizzle ORM Setup
 
 ```typescript
@@ -373,6 +379,9 @@ npm start
 
 # Linting
 npm run lint
+
+# Linting with auto-fix
+npm run lint -- --fix
 
 # Run tests
 npm test

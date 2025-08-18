@@ -2,8 +2,8 @@ import winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import LokiTransport from 'winston-loki';
 
-import { requestContext } from './utils/request-contex.util.js';
 import type { LogsConfigurationType } from './configurations.js';
+import { requestContext } from './utils/request-contex.util.js';
 
 const logLevels = {
   error: 0, // highest priority
@@ -16,6 +16,7 @@ const logLevels = {
 const requestIdFormat = winston.format((info) => {
   const store = requestContext.getStore();
   info['requestId'] = store?.requestId ?? '-';
+  info['workerId'] = process.pid;
   return info;
 });
 
@@ -32,11 +33,12 @@ export function addTransporter(configurations: LogsConfigurationType) {
         format: 'YYYY-MM-DD hh:mm:ss.SSS A',
       }),
       winston.format.printf(
-        ({ timestamp, level, message, logMetadata, stack }) => {
+        ({ timestamp, level, message, logMetadata, stack, workerId }) => {
           const store = requestContext.getStore();
           const requestId = store?.requestId ?? '-';
+          const worker = workerId || process.pid;
 
-          return `${timestamp} [${level}]: [${requestId}] ${logMetadata || ''} ${message} ${stack || ''}`;
+          return `${timestamp} [${level}]: [Worker:${worker}] [${requestId}] ${logMetadata || ''} ${message} ${stack || ''}`;
         },
       ),
     ),
@@ -67,7 +69,10 @@ export function addTransporter(configurations: LogsConfigurationType) {
   if (configurations.loki) {
     const lokiTransport = new LokiTransport({
       host: configurations.lokiUrl ?? '',
-      labels: { app: configurations.lokiAppName ?? 'my-app' },
+      labels: {
+        app: configurations.lokiAppName ?? 'my-app',
+        workerId: process.pid.toString(),
+      },
       json: true,
       format: winston.format.combine(
         requestIdFormat(),

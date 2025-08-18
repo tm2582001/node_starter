@@ -19,7 +19,7 @@ class ReadConfig {
     return this;
   };
 
-  addDefault = (name: string, value: any): ReadConfig => {
+  addDefault = (name: string, value: unknown): ReadConfig => {
     if (value) {
       this.configurations[name] = value;
     }
@@ -44,7 +44,7 @@ class ReadConfig {
       if (key.startsWith(`${prefix}${prefixSeparator}`)) {
         let keyLevel1: string | null = null,
           keyLevel2: string | null = null;
-        let configKey = key.replace('APP_', '');
+        const configKey = key.replace('APP_', '');
 
         if (configKey.includes(separator)) {
           keyLevel1 = configKey.split('__')[0] ?? null;
@@ -88,12 +88,13 @@ const databaseConfigurationSchema = z.object({
   host: z.string(),
   username: z.string(),
   password: z.string(),
-  connectionLimit: z.number().default(10)
+  connectionLimit: z.number().default(10),
 });
 
 const configurationSchema = z.object({
   port: z.coerce.number().min(1000),
   tenant: z.string(),
+  workers: z.number().default(-1), // -1 or 0 or negative = use all CPUs
   database: databaseConfigurationSchema,
   logs: logsConfigurationSchema,
 });
@@ -102,6 +103,7 @@ export type ConfigurationType = z.infer<typeof configurationSchema>;
 export type LogsConfigurationType = z.infer<typeof logsConfigurationSchema>;
 
 function buildConfig(): ConfigurationType {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   const __dirname = getCurrentDir(import.meta.url);
 
   const environment = process.env['NODE_ENV'] ?? 'local';
@@ -128,7 +130,7 @@ function buildConfig(): ConfigurationType {
     throw new Error(`Configuration validation failed:\n ${errorMessage}`);
   }
 
-  console.log('configurations parse successfully', JSON.stringify(result.data));
+  console.log('[configuration.ts:131] configurations parse successfully');
 
   return result.data;
 }

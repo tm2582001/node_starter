@@ -5,3 +5,8 @@ logs:
   lokiUrl: 'http://localhost:3100'
   lokiAppName: "node-fork"
   lokiEndpointToken: "x2tyR9lZxF5qqahPH8gIHXlSxFRlQkyd2SSalLO1hVaGh8pj0sQEjcPDa7l4VFBkQLP93LnxozDlLSvRWrtE8UoBA0aNNT0CCABAwyyFqR6sFVKK2vf7mOj1d0P0C2Du"
+database:
+  host: ""
+  username: ""
+  password: ""
+  connectionLimit: 10

@@ -77,15 +77,24 @@ const logsConfigurationSchema = z
     loki: z.coerce.boolean(),
     lokiUrl: z.url().optional(),
     lokiAppName: z.string().optional(),
-    lokiEndpointToken: z.string().optional()
+    lokiEndpointToken: z.string().optional(),
   })
   .refine((data) => !data.loki || data.lokiUrl, {
     message: 'lokiUrl is required when loki is true',
     path: ['lokiUrl'],
   });
 
+const databaseConfigurationSchema = z.object({
+  host: z.string(),
+  username: z.string(),
+  password: z.string(),
+  connectionLimit: z.number().default(10)
+});
+
 const configurationSchema = z.object({
   port: z.coerce.number().min(1000),
+  tenant: z.string(),
+  database: databaseConfigurationSchema,
   logs: logsConfigurationSchema,
 });
 

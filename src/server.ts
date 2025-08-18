@@ -1,3 +1,4 @@
+import type { MySql2Database } from 'drizzle-orm/mysql2';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import client from 'prom-client';
@@ -8,7 +9,7 @@ import { requestIdMiddleware } from './middlewares/request-id.middleware.js';
 import metrics from './routes/metrics.route.js';
 import v1 from './routes/v1/index.js';
 
-const createServer = (config: ConfigurationType) => {
+const createServer = (config: ConfigurationType, db: MySql2Database) => {
   const collectDefaultMetrics = client.collectDefaultMetrics;
   collectDefaultMetrics({ register: client.register });
 
@@ -17,7 +18,7 @@ const createServer = (config: ConfigurationType) => {
     .disable('x-powered-by')
     .use((req: Request, _res: Response, next: NextFunction) => {
       req.config = config;
-
+      req.db = db;
       return next();
     })
     .use(requestIdMiddleware)

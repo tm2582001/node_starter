@@ -2,49 +2,117 @@
 
 A Node.js application built with Express.js, TypeScript, and Drizzle ORM, featuring multi-tenant architecture, metrics collection, and comprehensive logging capabilities.
 
-## 📁 Project Structure
+## 📁 Project Structure & Naming Conventions
 
+### Folder Structure
 ```
-node-fork/
-├── src/                           # Main application source code
-│   ├── db/                        # Database connection and schemas
-│   │   ├── index.ts              # Database pool creation
-│   │   └── schemas/              # Drizzle ORM schemas
-│   ├── middlewares/              # Express middlewares
-│   │   ├── morgan.middleware.ts  # HTTP request logging
-│   │   └── request-id.middleware.ts # Request ID tracking
-│   ├── routes/                   # API routes
-│   │   ├── metrics.route.ts      # Prometheus metrics endpoint
-│   │   └── v1/                   # Version 1 API routes
-│   │       └── index.ts
-│   ├── types/                    # TypeScript type definitions
-│   │   └── express.d.ts          # Extended Express types
-│   ├── utils/                    # Utility functions
-│   │   ├── directory-name.util.ts
-│   │   ├── metrics/              # Metrics utilities
-│   │   └── request-contex.util.ts
-│   ├── configurations.ts         # Configuration management
-│   ├── index.ts                  # Application entry point
-│   ├── logger.ts                 # Winston logger setup
-│   └── server.ts                 # Express server setup
-├── configurations/               # YAML configuration files
-│   ├── base.yaml                # Base configuration
-│   ├── local.yaml               # Local development config
-│   └── production.yaml          # Production configuration
-├── scripts/                     # Docker and monitoring scripts
-│   ├── docker-compose.yml       # Additional compose file
-│   └── monitoring/              # Monitoring setup
-│       ├── prometheus.yml       # Prometheus configuration
-│       └── for-test-not-used/   # Test monitoring configs
-├── drizzle/                     # Database migration files
-├── dist/                        # Compiled JavaScript output
-├── logs/                        # Application log files
-├── test/                        # Test files
-├── docker-compose.yml           # Main Docker Compose file
-├── Dockerfile                   # Docker image definition
-├── drizzle.config.ts           # Drizzle ORM configuration
-├── package.json                # Node.js dependencies
-└── tsconfig.json               # TypeScript configuration
+project-name/                    # Use kebab-case for project names
+├── src/                        # Main source code
+│   ├── routes/                 # API route handlers
+│   │   ├── user.route.ts      # Feature routes: {feature}.route.ts
+│   │   ├── auth.route.ts      # Authentication routes
+│   │   └── api/               # Versioned API routes
+│   │       └── v1/            # API versions
+│   ├── controllers/           # Business logic controllers
+│   │   ├── user.controller.ts # Feature controllers: {feature}.controller.ts
+│   │   └── auth.controller.ts
+│   ├── services/              # Business logic services
+│   │   ├── user.service.ts    # Feature services: {feature}.service.ts
+│   │   └── email.service.ts
+│   ├── middlewares/           # Express middlewares
+│   │   ├── auth.middleware.ts # Feature middlewares: {feature}.middleware.ts
+│   │   └── cors.middleware.ts
+│   ├── utils/                 # Utility functions
+│   │   ├── crypto.util.ts     # Utility files: {purpose}.util.ts
+│   │   ├── date.util.ts
+│   │   └── validation.util.ts
+│   ├── types/                 # TypeScript definitions
+│   │   ├── user.types.ts      # Feature types: {feature}.types.ts
+│   │   └── api.types.ts
+│   ├── db/                    # Database related
+│   │   ├── schemas/           # Database schemas
+│   │   │   ├── user.schema.ts # Schema files: {table}.schema.ts
+│   │   │   └── post.schema.ts
+│   │   └── migrations/        # Database migrations
+│   └── config/                # Configuration files
+├── tests/                     # Test files
+│   ├── unit/                  # Unit tests
+│   └── integration/           # Integration tests
+├── docker/                    # Docker related files
+├── scripts/                   # Build and utility scripts
+└── docs/                      # Documentation
+```
+
+### Naming Conventions
+
+#### Files & Folders
+- **Folders**: `kebab-case` (lowercase with hyphens)
+  - `user-management/`, `api-routes/`, `test-helpers/`
+- **TypeScript Files**: `{feature}.{type}.ts`
+  - Routes: `user.route.ts`, `auth.route.ts`
+  - Controllers: `user.controller.ts`, `product.controller.ts`
+  - Services: `email.service.ts`, `payment.service.ts`
+  - Middlewares: `auth.middleware.ts`, `rate-limit.middleware.ts`
+  - Utils: `crypto.util.ts`, `date-format.util.ts`
+  - Types: `user.types.ts`, `api.types.ts`
+  - Schemas: `user.schema.ts`, `product.schema.ts`
+
+#### Code Elements
+- **Variables & Functions**: `camelCase`
+  - `getUserById`, `validateEmail`, `authToken`
+- **Classes**: `PascalCase`
+  - `UserService`, `EmailController`, `DatabaseManager`
+- **Constants**: `UPPER_SNAKE_CASE`
+  - `API_BASE_URL`, `MAX_RETRY_ATTEMPTS`, `DEFAULT_TIMEOUT`
+- **Interfaces & Types**: `PascalCase`
+  - `UserInterface`, `ApiResponse`, `ConfigOptions`
+
+### Import Order
+1. **Node.js modules** (built-in)
+2. **External packages** (npm packages)
+3. **Internal files** (your application files)
+
+```typescript
+// user.service.ts
+import fs from 'node:fs';
+import path from 'node:path';
+
+import express from 'express';
+import jwt from 'jsonwebtoken';
+
+import { UserRepository } from './user.repository.js';
+import { validateEmail } from '../utils/validation.util.js';
+import type { UserInterface } from '../types/user.types.js';
+
+export class UserService {
+  // implementation
+}
+```
+
+#### Examples
+```typescript
+// user.service.ts
+export class UserService {
+  private readonly MAX_LOGIN_ATTEMPTS = 5;
+  
+  async getUserById(userId: string): Promise<UserInterface> {
+    // implementation
+  }
+  
+  private validateUserData(userData: CreateUserRequest): boolean {
+    // implementation
+  }
+}
+
+// auth.middleware.ts
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  // implementation
+};
+
+// database.util.ts
+export const connectToDatabase = async (): Promise<DatabaseConnection> => {
+  // implementation
+};
 ```
 
 ## 🚀 Quick Start

@@ -1,0 +1,11 @@
+node_modules
+dist
+logs
+monitoring-data
+.env
+.env.example
+.vscode
+.git
+.github
+.husky
+scripts

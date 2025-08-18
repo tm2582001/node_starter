@@ -10,6 +10,7 @@ services:
       NODE_ENV: production
     # depends_on:
     #   - db
+    # we can run as 3000:8080 to change main operating system binding
     ports:
       - "8080:8080"
 

@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  prom-server:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring-data/prometheus:/prometheus
+  graphana-server:
+    image: grafana/grafana
+    ports:
+     - 3000:3000
+    volumes:
+     - ./monitoring-data/grafana:/var/lib/grafana
+  loki-server:
+    image: grafana/loki
+    volumes:
+     - ./monitoring-data/loki:/loki
+    ports: 
+     - 3100:3100 

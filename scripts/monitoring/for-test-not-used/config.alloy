@@ -1,0 +1,42 @@
+local.file_match "daily_rotated_logs" {
+  path_targets = [{
+    __path__ = "./logs/application-*.log",
+  }]
+}
+
+loki.source.file "daily_rotated_logs" {
+  targets = local.file_match.daily_rotated_logs.targets
+  forward_to = [loki.process.parse_json.receiver]
+}
+
+loki.process "parse_json" {
+  forward_to = [loki.write.default.receiver]
+
+  stage.json {
+    expressions = {
+      level = "level",
+      message = "message", 
+      request_id = "requestId",
+      timestamp = "timestamp",
+    }
+  }
+
+  stage.regex {
+    expression = "(?P<method>GET|POST|PUT|DELETE|PATCH) (?P<path>\\S+) (?P<status>\\d+) (?P<size>\\d+) - (?P<response_time>[0-9.]+) ms"
+    source = "message"
+  }
+
+  stage.labels {
+    values = {
+      level = "",
+      method = "",
+      status = "",
+    }
+  }
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://host.docker.internal:3100/loki/api/v1/push"
+  }
+}

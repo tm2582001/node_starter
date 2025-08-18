@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  alloy:
+    image: grafana/alloy:latest
+    container_name: alloy
+    restart: unless-stopped
+    volumes:
+     - "C:/Personal Drive/cw/node server/node-fork/logs:/logs:ro"
+     - "C:/Personal Drive/cw/node server/node-fork/config.alloy:/etc/alloy/config.alloy:ro"
+    command: >
+      run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy

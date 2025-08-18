@@ -1,0 +1,5 @@
+logs:
+  terminal: true
+  dailyRotateFile: false
+  loki: true
+  lokiUrl: 'http://localhost:3100'

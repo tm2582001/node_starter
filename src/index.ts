@@ -17,7 +17,6 @@ async function startServer(processType: 'single' | 'worker') {
   const db = await createDbPool(configurations);
   const app = createServer(configurations, db);
   addTransporter(configurations.logs);
-  
 
   const server = app.listen(configurations.port, () => {
     const message =

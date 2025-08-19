@@ -1,3 +1,6 @@
+import 'reflect-metadata';
+
+// Set up module aliases for ES modules
 import cluster from 'node:cluster';
 import { Server } from 'node:http';
 import { cpus } from 'node:os';
@@ -6,6 +9,10 @@ import process from 'node:process';
 if (process.env['NODE_ENV'] !== 'production') {
   await import('dotenv').then((dotenv) => dotenv.config());
 }
+// import moduleAlias from 'module-alias';
+// moduleAlias.addAliases({
+//   ['@']: new URL('../src', import.meta.url).pathname,
+// });
 
 import buildConfig from './configurations.js';
 import createDbPool from './db/index.js';
@@ -14,7 +21,7 @@ import createServer from './server.js';
 
 // Shared server startup logic
 async function startServer(processType: 'single' | 'worker') {
-  const db = await createDbPool(configurations);
+  const { db } = await createDbPool(configurations);
   const app = createServer(configurations, db);
   addTransporter(configurations.logs);
 

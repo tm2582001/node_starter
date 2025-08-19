@@ -89,6 +89,7 @@ const databaseConfigurationSchema = z.object({
   username: z.string(),
   password: z.string(),
   connectionLimit: z.number().default(10),
+  port: z.number().min(1000).default(3306),
 });
 
 const configurationSchema = z.object({

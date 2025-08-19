@@ -8,7 +8,7 @@
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "lint": "eslint",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsx --test"
   },
   "keywords": [],
   "author": "Tushar Mehta",
@@ -32,7 +32,7 @@
     "prettier": "^3.6.2",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.39.1"
+    "typescript-eslint": "8.40.0"
   },
   "dependencies": {
     "@types/express": "^5.0.3",

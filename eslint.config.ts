@@ -9,7 +9,7 @@ import importPlugin from 'eslint-plugin-import';
 
 export default defineConfig([
   {
-    files: ['src/**/*.{js,mjs,cjs,ts,mts,cts}'],
+    files: ['src/**/*.{js,mjs,cjs,ts,mts,cts}', 'tests/**/*.{ts,mts,cts}'],
     plugins: { js, prettier, import: importPlugin },
     extends: ['js/recommended'],
     rules: {
@@ -35,10 +35,9 @@ export default defineConfig([
     },
     languageOptions: { globals: globals.node },
   },
-  // @ts-expect-error ignore this error
   tseslint.configs.recommended,
   {
-    files: ['src/**/*.{ts,mts,cts}'],
+    files: ['src/**/*.{ts,mts,cts}', 'tests/**/*.{ts,mts,cts}'],
     rules: {
       // TypeScript naming conventions
       '@typescript-eslint/naming-convention': [

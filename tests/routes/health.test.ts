@@ -1,11 +1,11 @@
-import assert from 'node:assert';
-import { test } from 'node:test';
+import assert from "node:assert";
+import { test } from "node:test";
 
-import buildConfig from '../../src/configurations';
-import createDbPool from '../../src/db/index';
-import createServer from '../../src/server';
+import buildConfig from "../../src/configurations";
+import createDbPool from "../../src/db/index";
+import createServer from "../../src/server";
 
-test('Health endpoint should return 200 and ok: true', async () => {
+test("Health endpoint should return 200 and ok: true", async () => {
   const config = buildConfig();
   const { db, poolConnection } = await createDbPool(config);
   const app = createServer(config, db);
@@ -14,7 +14,7 @@ test('Health endpoint should return 200 and ok: true', async () => {
 
   // Wait for server to start
   await new Promise((resolve) => {
-    server.on('listening', resolve);
+    server.on("listening", resolve);
   });
 
   try {

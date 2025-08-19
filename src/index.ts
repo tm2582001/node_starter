@@ -1,33 +1,30 @@
-import 'reflect-metadata';
+import "module-alias/register.js";
+import "reflect-metadata";
 
 // Set up module aliases for ES modules
-import cluster from 'node:cluster';
-import { Server } from 'node:http';
-import { cpus } from 'node:os';
-import process from 'node:process';
+import cluster from "node:cluster";
+import { Server } from "node:http";
+import { cpus } from "node:os";
+import process from "node:process";
 
-if (process.env['NODE_ENV'] !== 'production') {
-  await import('dotenv').then((dotenv) => dotenv.config());
+if (process.env["NODE_ENV"] !== "production") {
+  await import("dotenv").then((dotenv) => dotenv.config());
 }
-// import moduleAlias from 'module-alias';
-// moduleAlias.addAliases({
-//   ['@']: new URL('../src', import.meta.url).pathname,
-// });
 
-import buildConfig from './configurations.js';
-import createDbPool from './db/index.js';
-import { addTransporter } from './logger.js';
-import createServer from './server.js';
+import buildConfig from "./configurations.js";
+import createDbPool from "./db/index.js";
+import { addTransporter } from "./logger.js";
+import createServer from "./server.js";
 
 // Shared server startup logic
-async function startServer(processType: 'single' | 'worker') {
+async function startServer(processType: "single" | "worker") {
   const { db } = await createDbPool(configurations);
   const app = createServer(configurations, db);
   addTransporter(configurations.logs);
 
   const server = app.listen(configurations.port, () => {
     const message =
-      processType === 'single'
+      processType === "single"
         ? `Server listening on port ${configurations.port}`
         : `Worker ${process.pid} listening on port ${configurations.port}`;
     console.log(message);
@@ -39,29 +36,29 @@ async function startServer(processType: 'single' | 'worker') {
 // Shared graceful shutdown logic
 function setupGracefulShutdown(
   server: Server | null,
-  processType: 'single' | 'worker' | 'primary',
+  processType: "single" | "worker" | "primary",
 ) {
   const shutdownHandler = (signal: string) => {
     const processName =
-      processType === 'single'
-        ? 'Process'
-        : processType === 'worker'
+      processType === "single"
+        ? "Process"
+        : processType === "worker"
           ? `Worker ${process.pid}`
-          : 'Primary';
+          : "Primary";
 
     console.log(`${processName} received ${signal}, shutting down gracefully`);
 
-    if (processType === 'primary') {
+    if (processType === "primary") {
       // Shutdown all workers
       for (const id in cluster.workers) {
-        cluster.workers[id]?.kill('SIGTERM');
+        cluster.workers[id]?.kill("SIGTERM");
       }
     } else {
       // Shutdown server
       server?.close(() => {
         console.log(
-          processType === 'single'
-            ? 'Server closed'
+          processType === "single"
+            ? "Server closed"
             : `Worker ${process.pid} closed server`,
         );
         process.exit(0);
@@ -69,8 +66,8 @@ function setupGracefulShutdown(
     }
   };
 
-  process.on('SIGTERM', () => shutdownHandler('SIGTERM'));
-  process.on('SIGINT', () => shutdownHandler('SIGINT'));
+  process.on("SIGTERM", () => shutdownHandler("SIGTERM"));
+  process.on("SIGINT", () => shutdownHandler("SIGINT"));
 }
 
 const configurations = buildConfig();
@@ -82,8 +79,8 @@ const numCPUs =
 // Single process mode - no clustering overhead
 if (numCPUs === 1) {
   console.log(`Single process mode: Process ${process.pid} starting...`);
-  const server = await startServer('single');
-  setupGracefulShutdown(server, 'single');
+  const server = await startServer("single");
+  setupGracefulShutdown(server, "single");
 }
 // Cluster mode - primary process
 else if (cluster.isPrimary) {
@@ -111,17 +108,17 @@ else if (cluster.isPrimary) {
   }
 
   // Restart crashed workers
-  cluster.on('exit', (worker, code, signal) => {
+  cluster.on("exit", (worker, code, signal) => {
     console.log(
       `Worker ${worker.process.pid} died (${signal || code}). Restarting...`,
     );
     cluster.fork();
   });
 
-  setupGracefulShutdown(null, 'primary');
+  setupGracefulShutdown(null, "primary");
 }
 // Cluster mode - worker process
 else {
-  const server = await startServer('worker');
-  setupGracefulShutdown(server, 'worker');
+  const server = await startServer("worker");
+  setupGracefulShutdown(server, "worker");
 }

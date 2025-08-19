@@ -19,6 +19,7 @@ export default defineConfig([
           endOfLine: 'auto',
         },
       ],
+      'quotes': ['error', 'double', { 'avoidEscape': true }],
       'import/order': [
         'warn',
         {

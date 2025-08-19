@@ -1,7 +1,7 @@
-import { drizzle } from 'drizzle-orm/mysql2';
-import mysql from 'mysql2/promise';
+import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
 
-import type { ConfigurationType } from '../configurations.js';
+import type { ConfigurationType } from "../configurations.js";
 
 const createDbPool = async (configuration: ConfigurationType) => {
   const poolConnection = mysql.createPool({
@@ -17,7 +17,7 @@ const createDbPool = async (configuration: ConfigurationType) => {
     // Try to get a connection from the pool
     const conn = await poolConnection.getConnection();
     await conn.ping(); // optional, ensures DB is reachable
-    console.log('[db:index.js:20] connected to db successfully');
+    console.log("[db:index.js:20] connected to db successfully");
     conn.release();
   } catch (err) {
     // Important: close the pool so we don't leak sockets

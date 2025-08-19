@@ -1,14 +1,14 @@
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { IncomingMessage, ServerResponse } from "node:http";
 
-import morgan from 'morgan';
-import type { FormatFn } from 'morgan';
+import morgan from "morgan";
+import type { FormatFn } from "morgan";
 
-import logger from '../logger.js';
-import reqResponseTime from '../utils/metrics/req-res-time.util.js';
-import totalReqCounter from '../utils/metrics/total-req-counter.util.js';
+import logger from "../logger.js";
+import reqResponseTime from "../utils/metrics/req-res-time.util.js";
+import totalReqCounter from "../utils/metrics/total-req-counter.util.js";
 
 const logFormat = morgan.compile(
-  ':method :url :status :res[content-length] - :response-time ms',
+  ":method :url :status :res[content-length] - :response-time ms",
 );
 
 const formatFunction: FormatFn = (
@@ -18,11 +18,11 @@ const formatFunction: FormatFn = (
 ): string => {
   reqResponseTime
     .labels({
-      method: tokens['method']?.(req, res) ?? '-',
-      route: tokens['url']?.(req, res) ?? '-',
-      statusCode: tokens['status']?.(req, res) ?? '-',
+      method: tokens["method"]?.(req, res) ?? "-",
+      route: tokens["url"]?.(req, res) ?? "-",
+      statusCode: tokens["status"]?.(req, res) ?? "-",
     })
-    .observe(parseInt(tokens['response-time']?.(req, res) ?? '-1'));
+    .observe(parseInt(tokens["response-time"]?.(req, res) ?? "-1"));
 
   totalReqCounter.inc();
 

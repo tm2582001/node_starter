@@ -1,10 +1,10 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from "node:fs";
+import path from "node:path";
 
-import yaml from 'js-yaml';
-import z from 'zod';
+import yaml from "js-yaml";
+import z from "zod";
 
-import getCurrentDir from './utils/directory-name.util.js';
+import getCurrentDir from "./utils/directory-name.util.js";
 
 type ReadConfigConfiguration = Record<string, unknown>;
 
@@ -29,7 +29,7 @@ class ReadConfig {
 
   static readFile = (filename: string): ReadConfigConfiguration => {
     return yaml.load(
-      fs.readFileSync(filename, 'utf-8'),
+      fs.readFileSync(filename, "utf-8"),
     ) as ReadConfigConfiguration;
   };
 
@@ -44,11 +44,11 @@ class ReadConfig {
       if (key.startsWith(`${prefix}${prefixSeparator}`)) {
         let keyLevel1: string | null = null,
           keyLevel2: string | null = null;
-        const configKey = key.replace('APP_', '');
+        const configKey = key.replace("APP_", "");
 
         if (configKey.includes(separator)) {
-          keyLevel1 = configKey.split('__')[0] ?? null;
-          keyLevel2 = configKey.split('__')[1] ?? null;
+          keyLevel1 = configKey.split("__")[0] ?? null;
+          keyLevel2 = configKey.split("__")[1] ?? null;
         } else {
           keyLevel1 = configKey;
         }
@@ -80,8 +80,8 @@ const logsConfigurationSchema = z
     lokiEndpointToken: z.string().optional(),
   })
   .refine((data) => !data.loki || data.lokiUrl, {
-    message: 'lokiUrl is required when loki is true',
-    path: ['lokiUrl'],
+    message: "lokiUrl is required when loki is true",
+    path: ["lokiUrl"],
   });
 
 const databaseConfigurationSchema = z.object({
@@ -107,31 +107,31 @@ function buildConfig(): ConfigurationType {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const __dirname = getCurrentDir(import.meta.url);
 
-  const environment = process.env['NODE_ENV'] ?? 'local';
+  const environment = process.env["NODE_ENV"] ?? "local";
 
   const configurations = new ReadConfig()
     .addSource(
-      ReadConfig.readFile(path.join(__dirname, '../configurations/base.yaml')),
+      ReadConfig.readFile(path.join(__dirname, "../configurations/base.yaml")),
     )
     .addSource(
       ReadConfig.readFile(
         path.join(__dirname, `../configurations/${environment}.yaml`),
       ),
     )
-    .addSource(ReadConfig.readFromEnvironment('APP', '_', '__'))
-    .addDefault('port', process.env['PORT']);
+    .addSource(ReadConfig.readFromEnvironment("APP", "_", "__"))
+    .addDefault("port", process.env["PORT"]);
 
   const result = configurationSchema.safeParse(configurations.configurations);
 
   if (!result.success) {
     const errorMessage = result.error.issues
-      .map((err) => `${err.path.join('.')}:${err.message}`)
-      .join('\n  ');
+      .map((err) => `${err.path.join(".")}:${err.message}`)
+      .join("\n  ");
 
     throw new Error(`Configuration validation failed:\n ${errorMessage}`);
   }
 
-  console.log('[configuration.ts:131] configurations parse successfully');
+  console.log("[configuration.ts:131] configurations parse successfully");
 
   return result.data;
 }

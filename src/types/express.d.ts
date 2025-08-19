@@ -1,6 +1,6 @@
-import type { MySql2Database } from 'drizzle-orm/mysql2';
+import type { MySql2Database } from "drizzle-orm/mysql2";
 
-import type { ConfigurationType } from '../configurations.js';
+import type { ConfigurationType } from "../configurations.js";
 
 declare global {
   namespace Express {

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 import CustomError from "@/errors/custom-error.error";
+import DatabaseError from "@/errors/database-error.error";
 import ErrorCode from "@/errors/error-codes.error";
 import ValidationError from "@/errors/validation-error.error";
 import logger from "@/logger";
@@ -16,6 +17,34 @@ const errorHandler = (
     logger.error(error.stack);
   }
 
+  if (error instanceof DatabaseError) {
+    logger.info(
+      `send database error with statusCode ${error.statusCode} and code: ${error.code}`,
+    );
+
+    res.status(error.statusCode).json({
+      error: {
+        message: error.message,
+        code: error.code,
+      },
+    });
+
+    return;
+  }
+
+  if (error instanceof ValidationError) {
+    logger.info(
+      `send validation error with statusCode ${error.statusCode} and code: ${error.code}`,
+    );
+    res.status(error.statusCode).json({
+      error: {
+        message: error.message,
+        code: error.code,
+      },
+    });
+    return;
+  }
+
   if (error instanceof CustomError) {
     logger.info(
       `send custom error with statusCode ${error.statusCode} and code: ${error.code}`,
@@ -27,19 +56,6 @@ const errorHandler = (
       );
     }
 
-    res.status(error.statusCode).json({
-      error: {
-        message: error.message,
-        code: error.code,
-      },
-    });
-    return;
-  }
-
-  if (error instanceof ValidationError) {
-    logger.info(
-      `send validation error with statusCode ${error.statusCode} and code: ${error.code}`,
-    );
     res.status(error.statusCode).json({
       error: {
         message: error.message,

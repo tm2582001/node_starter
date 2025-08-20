@@ -1,3 +1,4 @@
+import { DrizzleQueryError } from "drizzle-orm/errors";
 import type { Request, Response } from "express";
 import z from "zod";
 
@@ -86,6 +87,15 @@ const saveAlumni = async (req: Request, res: Response) => {
       },
     });
   } catch (error: unknown) {
+    if (error instanceof DrizzleQueryError) {
+      logger.error(
+        `error while saving user in db - ${error.cause?.name} ${JSON.stringify(error.cause)}`,
+      );
+      const dbError = new DatabaseError(error.cause?.message || error.message);
+      getErrorTrace(dbError);
+      throw dbError;
+    }
+
     if (
       error &&
       typeof error === "object" &&

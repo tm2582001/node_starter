@@ -8,12 +8,12 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: IITG
-    # environment:
+    environment:
       # DATABASE_URL: mysql://root:secret@db:3306/task_manager
-      # NODE_ENV: production
+      NODE_ENV: production
     # we can run as 3000:8080 to change main operating system binding
     ports:
-      - "8080:8080"
+      - "8000:8080"
     # cpus: 2
     restart: unless-stopped
 

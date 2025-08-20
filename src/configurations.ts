@@ -47,8 +47,8 @@ class ReadConfig {
         const configKey = key.replace("APP_", "");
 
         if (configKey.includes(separator)) {
-          keyLevel1 = configKey.split("__")[0] ?? null;
-          keyLevel2 = configKey.split("__")[1] ?? null;
+          keyLevel1 = configKey.split("__")[0]?.toLowerCase() ?? null;
+          keyLevel2 = configKey.split("__")[1]?.toLowerCase() ?? null;
         } else {
           keyLevel1 = configKey;
         }
@@ -131,7 +131,10 @@ function buildConfig(): ConfigurationType {
     throw new Error(`Configuration validation failed:\n ${errorMessage}`);
   }
 
-  console.log("[configuration.ts:131] configurations parse successfully");
+  console.log(
+    "[configuration.ts:131] configurations parse successfully",
+    JSON.stringify(result.data),
+  );
 
   return result.data;
 }

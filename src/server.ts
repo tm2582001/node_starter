@@ -1,3 +1,4 @@
+import cors from "cors";
 import type { MySql2Database } from "drizzle-orm/mysql2";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
@@ -10,6 +11,15 @@ import { requestIdMiddleware } from "./middlewares/request-id.middleware.js";
 import metrics from "./routes/metrics.route.js";
 import v1 from "./routes/v1/index.js";
 
+const corsOpts = {
+  origin: "*",
+
+  methods: "*",
+
+  allowedHeaders: "*",
+  exposedHeaders: "*",
+};
+
 const createServer = (config: ConfigurationType, db: MySql2Database) => {
   const collectDefaultMetrics = client.collectDefaultMetrics;
   collectDefaultMetrics({ register: client.register });
@@ -17,6 +27,7 @@ const createServer = (config: ConfigurationType, db: MySql2Database) => {
   const app = express();
   app
     .disable("x-powered-by")
+    .use(cors(corsOpts))
     .use((req: Request, _res: Response, next: NextFunction) => {
       req.config = config;
       req.db = db;

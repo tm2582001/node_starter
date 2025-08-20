@@ -45,7 +45,7 @@ const saveAlumni = async (req: Request, res: Response) => {
     throw error;
   }
 
-  logger.info("requested data: ", {
+  logger.debug("requested data: ", {
     logMetadata: JSON.stringify(body),
   });
 
@@ -71,12 +71,14 @@ const saveAlumni = async (req: Request, res: Response) => {
     const user = await db.insert(alumniRecord).values(validatedData.data);
     logger.info(
       `saved data successfully for emailId: ${validatedData.data.emailId}`,
+    );
+
+    logger.debug(
+      `registration response for emailId: ${validatedData.data.emailId} `,
       {
         logMetadata: JSON.stringify(user),
       },
     );
-
-    console.log(user);
 
     return res.status(200).json({
       success: true,

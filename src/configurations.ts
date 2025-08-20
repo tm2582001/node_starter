@@ -8,14 +8,43 @@ import getCurrentDir from "./utils/directory-name.util.js";
 
 type ReadConfigConfiguration = Record<string, unknown>;
 
+const toCamelCase = (str: string): string => {
+  return str
+    .toLowerCase()
+    .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+};
+
 class ReadConfig {
   configurations: ReadConfigConfiguration;
   constructor() {
     this.configurations = {};
   }
 
+  private deepMerge = (
+    target: ReadConfigConfiguration,
+    source: ReadConfigConfiguration,
+  ): void => {
+    for (const key in source) {
+      if (
+        source[key] &&
+        typeof source[key] === "object" &&
+        !Array.isArray(source[key])
+      ) {
+        if (!target[key] || typeof target[key] !== "object") {
+          target[key] = {};
+        }
+        this.deepMerge(
+          target[key] as ReadConfigConfiguration,
+          source[key] as ReadConfigConfiguration,
+        );
+      } else {
+        target[key] = source[key];
+      }
+    }
+  };
+
   addSource = (jsonData: ReadConfigConfiguration): ReadConfig => {
-    this.configurations = { ...this.configurations, ...jsonData };
+    this.deepMerge(this.configurations, jsonData);
     return this;
   };
 
@@ -37,35 +66,46 @@ class ReadConfig {
     prefix: string,
     prefixSeparator: string,
     separator: string,
+    snakeCaseSeparator?: string,
   ): ReadConfigConfiguration => {
+    if (snakeCaseSeparator && snakeCaseSeparator === separator) {
+      throw new Error("snakeCaseSeparator and separator cannot be the same");
+    }
+
     const config: ReadConfigConfiguration = {};
 
     for (const key in process.env) {
       if (key.startsWith(`${prefix}${prefixSeparator}`)) {
-        let keyLevel1: string | null = null,
-          keyLevel2: string | null = null;
-        const configKey = key.replace("APP_", "");
+        const configKey = key.replace(`${prefix}${prefixSeparator}`, "");
+        const keyParts = configKey.split(separator).map((part) => {
+          if (snakeCaseSeparator) {
+            return toCamelCase(part);
+          } else {
+            return part.toLowerCase();
+          }
+        });
 
-        if (configKey.includes(separator)) {
-          keyLevel1 = configKey.split("__")[0]?.toLowerCase() ?? null;
-          keyLevel2 = configKey.split("__")[1]?.toLowerCase() ?? null;
-        } else {
-          keyLevel1 = configKey;
+        if (keyParts.length === 0 || !keyParts[0]) continue;
+
+        let current = config;
+
+        for (let i = 0; i < keyParts.length - 1; i++) {
+          const part = keyParts[i];
+          if (!part) continue;
+
+          if (!current[part] || typeof current[part] !== "object") {
+            current[part] = {};
+          }
+          current = current[part] as Record<string, unknown>;
         }
 
-        if (!keyLevel1) continue;
-
-        if (keyLevel2) {
-          if (!config[keyLevel1]) {
-            config[keyLevel1] = {};
-          }
-          (config[keyLevel1] as Record<string, unknown>)[keyLevel2] =
-            process.env[key];
-        } else {
-          config[keyLevel1] = process.env[key];
+        const lastKey = keyParts[keyParts.length - 1];
+        if (lastKey) {
+          current[lastKey] = process.env[key];
         }
       }
     }
+
     return config;
   };
 }
@@ -118,7 +158,7 @@ function buildConfig(): ConfigurationType {
         path.join(__dirname, `../configurations/${environment}.yaml`),
       ),
     )
-    .addSource(ReadConfig.readFromEnvironment("APP", "_", "__"))
+    .addSource(ReadConfig.readFromEnvironment("APP", "_", "__", "_"))
     .addDefault("port", process.env["PORT"]);
 
   const result = configurationSchema.safeParse(configurations.configurations);

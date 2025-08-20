@@ -1,4 +1,3 @@
-import "module-alias/register.js";
 import "reflect-metadata";
 
 // Set up module aliases for ES modules
@@ -11,10 +10,10 @@ if (process.env["NODE_ENV"] !== "production") {
   await import("dotenv").then((dotenv) => dotenv.config());
 }
 
-import buildConfig from "./configurations.js";
-import createDbPool from "./db/index.js";
-import { addTransporter } from "./logger.js";
-import createServer from "./server.js";
+import buildConfig from "./configurations";
+import createDbPool from "./db/index";
+import { addTransporter } from "./logger";
+import createServer from "./server";
 
 // Shared server startup logic
 async function startServer(processType: "single" | "worker") {

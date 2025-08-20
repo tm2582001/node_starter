@@ -1,35 +1,24 @@
 version: "3.8"
 
+name: node-fork-project
+
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: IITG
     environment:
       # DATABASE_URL: mysql://root:secret@db:3306/task_manager
       NODE_ENV: production
-    # depends_on:
-    #   - db
     # we can run as 3000:8080 to change main operating system binding
     ports:
       - "8080:8080"
     # cpus: 2
     restart: unless-stopped
+
     # deploy:
     #   replicas: 4
     # endpoint_mode: vip 
     #  docker stack deploy -c docker-compose.yml myapp <- for swarm load balancing
 
-
-#   db:
-#     image: mysql:8.0
-#     environment:
-#       MYSQL_ROOT_PASSWORD: secret
-#       MYSQL_DATABASE: task_manager
-#     ports:
-#       - "3306:3306"
-#     volumes:
-#       - db-data:/var/lib/mysql
-
-# volumes:
-#   db-data:

@@ -47,7 +47,14 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "tests"]
+  "exclude": ["node_modules", "dist", "tests"],
+   "tsc-alias": {
+    "resolveFullPaths": true,
+    "replacer": {
+        "module-alias/register": "module-alias/register.js"
+      },
+    "verbose": false
+  }
   // "ts-node": {
   //   "swc": true
   // }

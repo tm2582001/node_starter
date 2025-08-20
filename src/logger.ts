@@ -3,7 +3,7 @@ import DailyRotateFile from "winston-daily-rotate-file";
 import LokiTransport from "winston-loki";
 
 import type { LogsConfigurationType } from "./configurations";
-import { requestContext } from "./utils/request-context.util.js";
+import { requestContext } from "./utils/request-context.util";
 
 const logLevels = {
   error: 0, // highest priority

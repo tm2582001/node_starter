@@ -9,5 +9,5 @@ database:
   host: ""
   username: ""
   password: ""
-  port: ""
+  # port: ""
   connectionLimit: 10
